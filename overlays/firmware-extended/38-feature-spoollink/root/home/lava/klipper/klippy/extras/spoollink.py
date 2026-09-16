@@ -5,8 +5,6 @@
 import logging
 
 from . import filament_protocol
-from .print_task_config import DEFAULT_PRINT_TASK_CONFIG
-
 
 class SpoolLink:
     def __init__(self, config):
@@ -36,10 +34,6 @@ class SpoolLink:
             logging.info('[spoollink] ch%d: %s', channel, message)
         ptc = self.printer.lookup_object('print_task_config')
         ptc._rfid_filament_info_update_cb(channel, info, is_clear=True)
-        if not self.printer.update_snapmaker_config_file(
-                ptc.config_path, ptc.print_task_config, DEFAULT_PRINT_TASK_CONFIG):
-            logging.warning('[spoollink] ch%d: failed to persist spool %s',
-                            channel, info.get('SPOOL_ID', 0))
         self.gcode.respond_raw('// %s' % message)
         web_request.send({})
 
